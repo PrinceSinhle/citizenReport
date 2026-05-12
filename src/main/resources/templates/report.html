@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Report Issue - Witbank Community Service</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, 'Segoe UI', 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f0f4f8;
+            color: #1e2a3e;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+            min-height: 100vh;
+        }
+
+        /* main container - consistent with dashboard shell style */
+        .report-shell {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* header styling matching dashboard-header */
+        .report-header {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.75rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9edf2;
+        }
+
+        .eyebrow {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: #2c6e9e;
+            background: #eef4fc;
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            margin-bottom: 0.75rem;
+        }
+
+        .report-header h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #0f2b3d;
+            margin-bottom: 0.35rem;
+        }
+
+        .report-header p {
+            color: #4a5b6e;
+            font-size: 1rem;
+        }
+
+        /* panel styling (matches dashboard panels) */
+        .form-panel {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eef2f8;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .panel-title-row {
+            padding: 1.25rem 1.5rem 0.5rem 1.5rem;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .panel-title-row h2 {
+            font-weight: 700;
+            color: #1e2f3f;
+            font-size: 1.35rem;
+            margin: 0;
+        }
+
+        /* complaint form */
+        .complaint-form {
+            padding: 1.75rem 1.75rem 2rem 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1f4e6e;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            border: 1px solid #cbdbe0;
+            border-radius: 1rem;
+            padding: 0.8rem 1rem;
+            font-family: inherit;
+            font-size: 0.95rem;
+            background: #fff;
+            transition: 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2c7cb6;
+            box-shadow: 0 0 0 2px rgba(44, 124, 182, 0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* helper text */
+        .hint {
+            font-size: 0.75rem;
+            color: #6c869c;
+            margin-top: 0.2rem;
+        }
+
+        /* button row - using same button classes as dashboard */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+            align-items: center;
+        }
+
+        .login-btn {
+            background: #1f6392;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.8rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.2s ease;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+            font-family: inherit;
+        }
+
+        .login-btn:hover {
+            background: #0e4a70;
+            text-decoration: none;
+        }
+
+        .button-secondary {
+            background: #eef2f7;
+            color: #2c3e4e;
+            border: 1px solid #cdd9e9;
+            padding: 0.7rem 1.6rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+
+        .button-secondary:hover {
+            background: #e2e8f0;
+            border-color: #b9cadb;
+        }
+
+        /* back link styled as subtle text link */
+        .back-link-wrapper {
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        .back-link {
+            color: #2c6e9e;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: #0e4a70;
+            text-decoration: underline;
+        }
+
+        /* validation / error styling (optional, but user-friendly) */
+        .form-group input.error,
+        .form-group select.error,
+        .form-group textarea.error {
+            border-color: #c96a63;
+            background-color: #fff8f7;
+        }
+
+        .error-message {
+            color: #b13e3a;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        /* optional toast/notification if needed (like dashboard) */
+        .demo-note {
+            background: #eef4fc;
+            border-radius: 1rem;
+            padding: 0.9rem 1.2rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: #1f6392;
+            border-left: 4px solid #1f6392;
+        }
+
+        @media (max-width: 560px) {
+            body {
+                padding: 1rem;
+            }
+            .form-panel {
+                border-radius: 1.25rem;
+            }
+            .button-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .button-group .login-btn,
+            .button-group .button-secondary {
+                text-align: center;
+                justify-content: center;
+            }
+        }
+
+        /* required star indicator */
+        .required-star {
+            color: #c96a63;
+            margin-left: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="report-shell">
+    <!-- header consistent with dashboard style -->
+    <header class="report-header">
+        <div class="eyebrow">Community Service Portal</div>
+        <h1>Report an Issue</h1>
+        <p>Help us improve Witbank by reporting problems like potholes, broken streetlights, waste issues, and more. Your report will be tracked and addressed.</p>
+    </header>
+
+    <!-- optional information note (non-intrusive) -->
+    <div class="demo-note">
+        <strong>Tip:</strong> Provide as many details as possible. Accurate location helps our team respond faster.
+    </div>
+
+    <!-- main form panel - identical card style as dashboard -->
+    <div class="form-panel">
+        <div class="panel-title-row">
+            <h2>Submit a New Complaint</h2>
+        </div>
+
+        <!-- form action fixed to "/submit" (preserving original) but adding method="post" - all fields intact -->
+        <form action="/submit" method="post" class="complaint-form" id="complaintForm">
+            <!-- Issue Type field -->
+            <div class="form-group">
+                <label for="issueType">Issue Type <span class="required-star">*</span></label>
+                <input type="text" id="issueType" name="issueType" placeholder="e.g., Pothole, Streetlight outage, Waste collection, Drainage, etc." required>
+                <div class="hint">Be specific to help route your complaint correctly.</div>
+            </div>
+
+            <!-- Description field - upgraded from input to textarea for better UX -->
+            <div class="form-group">
+                <label for="description">Description <span class="required-star">*</span></label>
+                <textarea id="description" name="description" placeholder="Describe the issue in detail... include nearby landmarks, size, severity, or any relevant info." required></textarea>
+                <div class="hint">Detailed descriptions get faster resolution.</div>
+            </div>
+
+            <!-- Location dropdown - preserved exactly all original options, enhanced styling -->
+            <div class="form-group">
+                <label for="location">Location <span class="required-star">*</span></label>
+                <select name="location" id="location" required>
+                    <option value="">-- Select Location --</option>
+                    <option value="Witbank Central">Witbank Central</option>
+                    <option value="Tasbet Park">Tasbet Park</option>
+                    <option value="Jakaroo Park">Jakaroo Park</option>
+                    <option value="Del Judor">Del Judor</option>
+                    <option value="Ben Fleur">Ben Fleur</option>
+                    <option value="Hoeveld Park">Hoeveld Park</option>
+                    <option value="Vosman">Vosman</option>
+                </select>
+                <div class="hint">Choose the suburb or area where the issue is located.</div>
+            </div>
+
+            <!-- Button row with submit + cancel action -->
+            <div class="button-group">
+                <button type="submit" class="login-btn">Submit Complaint</button>
+                <a href="/dashboard" class="button-secondary">Cancel & Go Back</a>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<!-- small client-side validation enhancement (non-intrusive, preserves original colors) -->
+<script>
+    (function() {
+        const form = document.getElementById('complaintForm');
+        if (!form) return;
+
+        // Helper to show inline error (but keep design consistent)
+        function showFieldError(field, message) {
+            // remove any existing error for this field
+            const parent = field.closest('.form-group');
+            let existingErr = parent.querySelector('.error-message');
+            if (existingErr) existingErr.remove();
+            field.classList.add('error');
+            const errorSpan = document.createElement('div');
+            errorSpan.className = 'error-message';
+            errorSpan.textContent = message;
+            parent.appendChild(errorSpan);
+        }
+
+        function clearFieldError(field) {
+            const parent = field.closest('.form-group');
+            const existingErr = parent.querySelector('.error-message');
+            if (existingErr) existingErr.remove();
+            field.classList.remove('error');
+        }
+
+        // Real-time clear error on input
+        const issueInput = document.getElementById('issueType');
+        const descTextarea = document.getElementById('description');
+        const locationSelect = document.getElementById('location');
+
+        [issueInput, descTextarea, locationSelect].forEach(field => {
+            if (field) {
+                field.addEventListener('input', function() { clearFieldError(this); });
+                field.addEventListener('change', function() { clearFieldError(this); });
+            }
+        });
+
+        // submit validation: ensure fields are not empty/whitespace
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+
+            const issueType = document.getElementById('issueType');
+            const description = document.getElementById('description');
+            const location = document.getElementById('location');
+
+            // Trim and validate issueType
+            if (!issueType.value.trim()) {
+                showFieldError(issueType, 'Please enter an issue type.');
+                isValid = false;
+            } else {
+                clearFieldError(issueType);
+            }
+
+            // Validate description
+            if (!description.value.trim()) {
+                showFieldError(description, 'Please provide a detailed description.');
+                isValid = false;
+            } else if (description.value.trim().length < 5) {
+                showFieldError(description, 'Description must be at least 5 characters.');
+                isValid = false;
+            } else {
+                clearFieldError(description);
+            }
+
+            // Validate location selection
+            if (!location.value) {
+                showFieldError(location, 'Please select a valid location.');
+                isValid = false;
+            } else {
+                clearFieldError(location);
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                // scroll to first error
+                const firstError = document.querySelector('.error-message');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return false;
+            }
+
+            // Optional: disable submit button to prevent double submission (improves UX)
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn && !submitBtn.disabled) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+                // allow form to submit, re-enable if there's a network error is too edge, but ok.
+                setTimeout(() => {
+                    // re-enable after 15 seconds if something hangs (just safety)
+                    if (submitBtn.disabled) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Submit Complaint';
+                    }
+                }, 15000);
+            }
+            return true;
+        });
+    })();
+</script>
+</body>
+</html>

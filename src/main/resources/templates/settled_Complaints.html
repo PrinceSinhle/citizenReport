@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Settled Complaints - Witbank Community Service</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, 'Segoe UI', 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f0f4f8;
+            color: #1e2a3e;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+        }
+
+        /* main shell */
+        .admin-shell {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* header styling */
+        .admin-header {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.75rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9edf2;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-header-copy {
+            flex: 2;
+        }
+
+        .eyebrow {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: #2c6e9e;
+            background: #eef4fc;
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            margin-bottom: 0.75rem;
+        }
+
+        .admin-header-copy h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #0f2b3d;
+            margin-bottom: 0.35rem;
+        }
+
+        .admin-header-copy p {
+            color: #4a5b6e;
+            font-size: 1rem;
+        }
+
+        .admin-header-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* buttons */
+        .login-btn {
+            background: #1f6392;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.6rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.2s ease;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+            font-family: inherit;
+        }
+
+        .login-btn:hover {
+            background: #0e4a70;
+            text-decoration: none;
+        }
+
+        .button-secondary {
+            background: #eef2f7;
+            color: #2c3e4e;
+            border: 1px solid #cdd9e9;
+            padding: 0.7rem 1.6rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+
+        .button-secondary:hover {
+            background: #e2e8f0;
+            border-color: #b9cadb;
+        }
+
+        /* notification banner */
+        .notification-banner {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.8rem;
+            border-radius: 1rem;
+            border-left: 5px solid #2b7a4b;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .notification-banner p {
+            margin: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* panel for complaints table */
+        .panel {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eef2f8;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .panel-title-row {
+            padding: 1.25rem 1.5rem 0.5rem 1.5rem;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .panel-title-row h2 {
+            font-weight: 700;
+            color: #1e2f3f;
+            font-size: 1.35rem;
+            margin: 0;
+        }
+
+        .panel-subtitle {
+            color: #5e7a93;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        /* table wrapper */
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 0;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .data-table thead tr {
+            background: #f9fbfd;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 1rem 1rem;
+            font-weight: 700;
+            color: #2c4c6c;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .data-table td {
+            padding: 1rem 1rem;
+            border-bottom: 1px solid #f0f2f5;
+            color: #27455c;
+            vertical-align: middle;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:hover {
+            background-color: #fafcff;
+        }
+
+        /* status badge */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .status-submitted {
+            background: #eef2fa;
+            color: #2c6280;
+        }
+        .status-in_progress {
+            background: #fff0db;
+            color: #b8681a;
+        }
+        .status-resolved {
+            background: #e0f2e9;
+            color: #1f7840;
+        }
+        .status-rejected {
+            background: #fee9e7;
+            color: #b13e3a;
+        }
+
+        /* action buttons in table */
+        .action-cell {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .action-cell form {
+            display: inline;
+        }
+
+        .restore-btn {
+            background: #1f6392;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: inherit;
+        }
+
+        .restore-btn:hover {
+            background: #0e4a70;
+        }
+
+        .delete-btn {
+            background: transparent;
+            border: 1px solid #e2b5b0;
+            color: #b13e3a;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+
+        .delete-btn:hover {
+            background: #fff5f4;
+            border-color: #c26e68;
+            color: #9b2f2b;
+        }
+
+        /* action bar */
+        .action-bar {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1rem 1.5rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #eef2f8;
+            margin-top: 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .empty-state {
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            color: #6b7f8f;
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+
+        .stats-note {
+            font-size: 0.8rem;
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 0.5rem 1rem;
+            display: inline-block;
+        }
+
+        /* responsive */
+        @media (max-width: 900px) {
+            body {
+                padding: 1rem;
+            }
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .admin-header-actions {
+                align-self: flex-start;
+            }
+            .data-table th, .data-table td {
+                padding: 0.75rem 0.9rem;
+            }
+            .action-cell {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="admin-shell">
+    <!-- header -->
+    <header class="admin-header">
+        <div class="admin-header-copy">
+            <div class="eyebrow">Administration Panel</div>
+            <h1>Settled Complaints Archive</h1>
+            <p>Review closed and resolved complaints. Restore or permanently delete as needed.</p>
+        </div>
+        <div class="admin-header-actions">
+            <a href="/admin" class="button-secondary">Back to Active</a>
+            <a href="/logout" class="login-btn">Logout</a>
+        </div>
+    </header>
+
+    <!-- notification banner -->
+    <div id="notification"
+         th:if="${successMessage}"
+         class="notification-banner">
+        <p th:text="${successMessage}"></p>
+    </div>
+
+    <!-- complaints table panel -->
+    <div class="panel">
+        <div class="panel-title-row">
+            <h2>Settled Complaints Overview</h2>
+            <div class="panel-subtitle">View complaints that have been marked as resolved or rejected.</div>
+        </div>
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Issue Type</th>
+                        <th>Description</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="complaint : ${complaints}">
+                        <td th:text="${complaint.id}"></td>
+                        <td th:text="${complaint.user.fullName}"></td>
+                        <td th:text="${complaint.issueType}"></td>
+                        <td th:text="${complaint.description}"></td>
+                        <td th:text="${complaint.location}"></td>
+                        <td>
+                            <span th:classappend="'status-badge ' + 
+                                (${complaint.status == 'SUBMITTED'} ? 'status-submitted' : 
+                                 (${complaint.status == 'IN_PROGRESS'} ? 'status-in_progress' : 
+                                 (${complaint.status == 'RESOLVED'} ? 'status-resolved' : 
+                                 (${complaint.status == 'REJECTED'} ? 'status-rejected' : ''))))"
+                                  th:text="${complaint.status}"></span>
+                        </td>
+                        <td>
+                            <div class="action-cell">
+                                <form action="/admin/restore" method="post">
+                                    <input type="hidden" name="complaintId" th:value="${complaint.id}">
+                                    <button type="submit" class="restore-btn">Restore</button>
+                                </form>
+                                <form action="/admin/delete" method="post" onsubmit="return confirm('Permanently delete this complaint?');">
+                                    <input type="hidden" name="complaintId" th:value="${complaint.id}">
+                                    <button type="submit" class="delete-btn">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div th:if="${#lists.isEmpty(complaints)}" class="empty-state">
+                No settled complaints at the moment.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript: Auto-hide notification -->
+<script>
+    (function() {
+        let notification = document.getElementById("notification");
+        if (notification) {
+            setTimeout(function () {
+                if (notification) {
+                    notification.style.display = "none";
+                }
+            }, 5000);
+        }
+    })();
+</script>
+</body>
+</html>

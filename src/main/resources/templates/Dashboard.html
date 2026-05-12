@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Dashboard - Witbank Community Service</title>
+    <!-- Preserved original color scheme and improved layout consistency -->
+    <style>
+        /* ===== RESET & BASE (preserving original color spirit) ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, 'Segoe UI', 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f0f4f8;   /* neutral soft background - original style friendly */
+            color: #1e2a3e;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+        }
+
+        /* main dashboard shell – respects original class naming */
+        .dashboard-shell {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: transparent;
+        }
+
+        /* header styles – preserves original classes + refined spacing */
+        .dashboard-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.75rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9edf2;
+        }
+
+        .dashboard-header-copy {
+            flex: 2;
+        }
+
+        .eyebrow {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: #2c6e9e;
+            background: #eef4fc;
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            margin-bottom: 0.75rem;
+        }
+
+        .dashboard-header-copy h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #0f2b3d;
+            margin-bottom: 0.35rem;
+        }
+
+        .dashboard-header-copy p {
+            color: #4a5b6e;
+            font-size: 1rem;
+        }
+
+        .dashboard-header-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Buttons – keeping original classes .login-btn, .button-secondary and .danger-btn */
+        .login-btn {
+            background: #1f6392;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.6rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.2s ease;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+        }
+
+        .login-btn:hover {
+            background: #0e4a70;
+            text-decoration: none;
+        }
+
+        .button-secondary {
+            background: #eef2f7;
+            color: #2c3e4e;
+            border: 1px solid #cdd9e9;
+            padding: 0.7rem 1.6rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+
+        .button-secondary:hover {
+            background: #e2e8f0;
+            border-color: #b9cadb;
+        }
+
+        /* Notification banner */
+        .notification-banner {
+            background: #e0f2e9;
+            border-left: 5px solid #2b7a4b;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.8rem;
+            color: #145c32;
+            font-weight: 500;
+        }
+
+        /* Dashboard grid - original classes: .dashboard-grid .panel .panel-large .panel-small */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 780px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            body {
+                padding: 1rem;
+            }
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .dashboard-header-actions {
+                align-self: flex-start;
+            }
+        }
+
+        .panel {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eef2f8;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .panel-large, .panel-small {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-title-row {
+            padding: 1.25rem 1.5rem 0.5rem 1.5rem;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .panel-title-row h2, .panel-title-row h3 {
+            font-weight: 700;
+            color: #1e2f3f;
+            font-size: 1.35rem;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .secondary-title-row {
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .secondary-title-row h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c5a7a;
+        }
+
+        /* table wrapper + data-table (original naming) */
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 0 0 0.5rem 0;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .data-table thead tr {
+            background: #f9fbfd;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 0.9rem 1rem;
+            font-weight: 600;
+            color: #2c4c6c;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .data-table td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid #f0f2f5;
+            color: #27455c;
+            vertical-align: top;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* feedback form – keeping original classes .feedback-form */
+        .feedback-form {
+            padding: 1rem 1.5rem 1.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            border-bottom: 1px solid #eef2f8;
+        }
+
+        .feedback-form label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1f4e6e;
+        }
+
+        .feedback-form textarea {
+            width: 100%;
+            border: 1px solid #cbdbe0;
+            border-radius: 1rem;
+            padding: 0.8rem 1rem;
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: vertical;
+            background: #fff;
+            transition: 0.2s;
+        }
+
+        .feedback-form textarea:focus {
+            outline: none;
+            border-color: #2c7cb6;
+            box-shadow: 0 0 0 2px rgba(44,124,182,0.2);
+        }
+
+        .feedback-form button {
+            align-self: flex-start;
+            background: #1f6392;
+            border: none;
+            color: white;
+            padding: 0.6rem 1.4rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .empty-state {
+            padding: 1.5rem;
+            text-align: center;
+            color: #6b7f8f;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        /* dashboard footnote + danger button */
+        .dashboard-footnote {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: flex-end;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1.5rem;
+        }
+
+        .danger-form {
+            margin: 0;
+        }
+
+        .danger-btn {
+            background: transparent;
+            border: 1px solid #e2b5b0;
+            color: #b13e3a;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .danger-btn:hover {
+            background: #fff5f4;
+            border-color: #c26e68;
+            color: #9b2f2b;
+        }
+
+        /* additional micro-fix for table responsiveness & empty states */
+        .data-table td:first-child, .data-table th:first-child {
+            padding-left: 1.5rem;
+        }
+        .data-table td:last-child, .data-table th:last-child {
+            padding-right: 1.5rem;
+        }
+
+        /* making sure status displays nicely */
+        .status-badge {
+            display: inline-block;
+            background: #edf2f7;
+            padding: 0.2rem 0.6rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-shell">
+    <header class="dashboard-header">
+        <div class="dashboard-header-copy">
+            <p class="eyebrow">User Dashboard</p>
+            <h1>Welcome back, <span th:text="${user.fullName}">Jane Mokoena</span></h1>
+            <p>Track your reports, submit feedback, and stay updated on progress.</p>
+        </div>
+        <div class="dashboard-header-actions">
+            <a href="/report" class="login-btn">Report Complaint</a>
+            <a href="/logout" class="button-secondary">Logout</a>
+        </div>
+    </header>
+
+    <div id="notification" th:if="${successMessage}" class="notification-banner">
+        <p th:text="${successMessage}">Your action was successful!</p>
+    </div>
+
+    <section class="dashboard-grid">
+        <!-- LEFT COLUMN: Complaints table (panel-large) -->
+        <div class="panel panel-large">
+            <div class="panel-title-row">
+                <h2>My Complaints</h2>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Issue Type</th>
+                            <th>Description</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Date Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Using th:each with proper rendering, fallback content to ensure visual consistency -->
+                        <tr th:each="complaint : ${complaints}">
+                            <td th:text="${complaint.id}">101</td>
+                            <td th:text="${complaint.issueType}">Pothole</td>
+                            <td th:text="${complaint.description}">Deep pothole near Central Ave</td>
+                            <td th:text="${complaint.location}">CBD Sector 2</td>
+                            <td>
+                                <span class="status-badge" th:text="${complaint.status}">Pending</span>
+                            </td>
+                            <td th:text="${complaint.createdAt}">2025-03-15</td>
+                        </tr>
+                        <!-- static fallback rows that will be replaced when Thymeleaf processes,
+                             however for pure frontend preview we need to show meaningful sample -->
+                        <tr th:remove="all">
+                            <td colspan="6" class="empty-state">No complaints found. Click 'Report Complaint' to get started.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- additional fallback message for empty complaint list (Thymeleaf conditional) -->
+                <div th:if="${#lists.isEmpty(complaints)}" class="empty-state">
+                    <p> You haven't submitted any complaints yet. <a href="/report" style="color:#1f6392;">Report an issue</a> to get started.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Feedback center and recent feedback list -->
+        <div class="panel panel-small">
+            <div class="panel-title-row">
+                <h2>Feedback Center</h2>
+            </div>
+            <!-- Feedback submission form - action fixed to POST /feedback and retains all fields -->
+            <form action="/feedback" method="post" class="feedback-form">
+                <label for="comment">Share your experience</label>
+                <textarea id="comment" name="comment" placeholder="Describe your feedback..." required></textarea>
+                <button type="submit" class="login-btn">Submit Feedback</button>
+            </form>
+
+            <div class="panel-title-row secondary-title-row">
+                <h3>Recent Feedback</h3>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Comment</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- dynamic feedback list from backend -->
+                        <tr th:each="feedback : ${feedbacks}">
+                            <td th:text="${feedback.comment}">Great service response time!</td>
+                            <td th:text="${feedback.createdAt}">2025-04-01</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div th:if="${#lists.isEmpty(feedbacks)}" class="empty-state">
+                    <p>You have not submitted any feedback yet. Use the form above to share your experience.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="dashboard-footnote">
+        <form action="/delete-account" method="post" class="danger-form" onsubmit="return confirm('Are you sure you want to delete your account? This action is permanent and will remove all your data.');">
+            <button type="submit" class="danger-btn">
+                Delete My Account
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- optional small script to handle any client-side fallback (ensures the confirm dialog and minor improvements) -->
+<script>
+    // Preserve original behavior: keep confirm dialog via inline but also ensure safe double confirmation.
+    // Additionally, fix any edge cases: the delete-account form already has confirm in onsubmit, but we also manage
+    // if script fails, inline confirm remains. We also ensure notification auto-hide? (optional but not required)
+    (function() {
+        // ensure any .danger-btn without explicit confirm? already done. provide graceful handling for ajax? no needed.
+        
+        const statusCells = document.querySelectorAll('.data-table td:nth-child(5)');
+        statusCells.forEach(cell => {
+            let statusText = cell.innerText.trim();
+            if (statusText && !cell.querySelector('.status-badge')) {
+                // if dynamic content not wrapped, add similar look
+                let original = cell.innerHTML;
+                cell.innerHTML = `<span class="status-badge">${original}</span>`;
+            }
+        });
+        // ensure that forms submit with spinner/disable double submit? optional but improvement.
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const submitBtn = form.querySelector('button[type="submit"]');
+                if (submitBtn && !submitBtn.hasAttribute('data-submitted')) {
+                    submitBtn.setAttribute('data-submitted', 'true');
+                    submitBtn.disabled = true;
+                    // optionally change text but prevent losing original text
+                    const originalText = submitBtn.innerText;
+                    if (form.action.includes('delete-account')) {
+                        // keep as is, confirm already triggered
+                    } else {
+                        submitBtn.innerText = originalText + ' ...';
+                    }
+                    // re-enable after 3 seconds if something goes wrong (edge)
+                    setTimeout(() => {
+                        if (submitBtn.disabled) {
+                            submitBtn.disabled = false;
+                            submitBtn.innerText = originalText;
+                            submitBtn.removeAttribute('data-submitted');
+                        }
+                    }, 8000);
+                }
+                // allow actual submission
+                return true;
+            });
+        });
+    })();
+</script>
+</body>
+</html>

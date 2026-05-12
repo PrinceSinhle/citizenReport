@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Admin Dashboard - Witbank Community Service</title>
+    <style>
+        /* ===== RESET & BASE (consistent with dashboard & report pages) ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, 'Segoe UI', 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f0f4f8;
+            color: #1e2a3e;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+        }
+
+        /* main admin shell - max width for readability */
+        .admin-shell {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* header styling - matches dashboard-header exactly */
+        .admin-header {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.75rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9edf2;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-header-copy {
+            flex: 2;
+        }
+
+        .eyebrow {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: #2c6e9e;
+            background: #eef4fc;
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            margin-bottom: 0.75rem;
+        }
+
+        .admin-header-copy h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #0f2b3d;
+            margin-bottom: 0.35rem;
+        }
+
+        .admin-header-copy p {
+            color: #4a5b6e;
+            font-size: 1rem;
+        }
+
+        .admin-header-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* buttons using existing classes */
+        .login-btn {
+            background: #1f6392;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.6rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.2s ease;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+            font-family: inherit;
+        }
+
+        .login-btn:hover {
+            background: #0e4a70;
+            text-decoration: none;
+        }
+
+        .button-secondary {
+            background: #eef2f7;
+            color: #2c3e4e;
+            border: 1px solid #cdd9e9;
+            padding: 0.7rem 1.6rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+
+        .button-secondary:hover {
+            background: #e2e8f0;
+            border-color: #b9cadb;
+        }
+
+        /* notification banner - preserved original colors but styled like dashboard */
+        .notification-banner {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.8rem;
+            border-radius: 1rem;
+            border-left: 5px solid #2b7a4b;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .notification-banner p {
+            margin: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* main panel for complaints table */
+        .panel {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eef2f8;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .panel-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.25rem 1.5rem 0.5rem 1.5rem;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .panel-title-row h2 {
+            font-weight: 700;
+            color: #1e2f3f;
+            font-size: 1.35rem;
+            margin: 0;
+        }
+
+        .panel-subtitle {
+            color: #5e7a93;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        /* table wrapper + data-table (same as dashboard) */
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 0;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .data-table thead tr {
+            background: #f9fbfd;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 1rem 1rem;
+            font-weight: 700;
+            color: #2c4c6c;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .data-table td {
+            padding: 1rem 1rem;
+            border-bottom: 1px solid #f0f2f5;
+            color: #27455c;
+            vertical-align: middle;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:hover {
+            background-color: #fafcff;
+        }
+
+        /* status badge styling (consistent coloring but using original status names) */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .status-submitted {
+            background: #eef2fa;
+            color: #2c6280;
+        }
+        .status-in_progress {
+            background: #fff0db;
+            color: #b8681a;
+        }
+        .status-resolved {
+            background: #e0f2e9;
+            color: #1f7840;
+        }
+        .status-rejected {
+            background: #fee9e7;
+            color: #b13e3a;
+        }
+
+        /* form inside table - status update row */
+        .inline-status-form {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .status-select {
+            background: white;
+            border: 1px solid #cbdbe0;
+            border-radius: 2rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #1f4e6e;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+
+        .status-select:focus {
+            outline: none;
+            border-color: #2c7cb6;
+            box-shadow: 0 0 0 2px rgba(44,124,182,0.2);
+        }
+
+        .update-btn {
+            background: #1f6392;
+            color: white;
+            border: none;
+            padding: 0.45rem 1.2rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: inherit;
+        }
+
+        .update-btn:hover {
+            background: #0e4a70;
+        }
+
+        /* action bar below table (buttons container) */
+        .action-bar {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1rem 1.5rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #eef2f8;
+            margin-top: 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .danger-btn {
+            background: transparent;
+            border: 1px solid #e2b5b0;
+            color: #b13e3a;
+            padding: 0.6rem 1.3rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .danger-btn:hover {
+            background: #fff5f4;
+            border-color: #c26e68;
+            color: #9b2f2b;
+        }
+
+        .empty-state {
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            color: #6b7f8f;
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+
+        /* responsive */
+        @media (max-width: 900px) {
+            body {
+                padding: 1rem;
+            }
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .admin-header-actions {
+                align-self: flex-start;
+            }
+            .data-table th, .data-table td {
+                padding: 0.75rem 0.9rem;
+            }
+            .inline-status-form {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* additional row highlight */
+        .stats-note {
+            font-size: 0.8rem;
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 0.5rem 1rem;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+<div class="admin-shell">
+    <!-- header identical to dashboard style -->
+    <header class="admin-header">
+        <div class="admin-header-copy">
+            <div class="eyebrow">Administration Panel</div>
+            <h1>Admin Dashboard</h1>
+            <p>Manage and update resident complaints across Witbank communities.</p>
+        </div>
+        <div class="admin-header-actions">
+            <a href="/admin/analytics" class="login-btn">View Analytics</a>
+            <a href="/admin/settled" class="login-btn">View Settled Complaints</a>
+            <a href="/admin/report/complaints" class="login-btn">Generate Report</a>
+            <a href="/logout" class="button-secondary">Logout</a>
+        </div>
+    </header>
+
+    <!-- notification banner with auto-hide (preserved functionality & original green style) -->
+    <div id="notification"
+         th:if="${successMessage}"
+         class="notification-banner">
+        <p th:text="${successMessage}">Status updated successfully!</p>
+    </div>
+
+    <!-- main complaints table panel -->
+    <div class="panel">
+        <div class="panel-title-row">
+            <h2>Active Complaints Overview</h2>
+            <div class="panel-subtitle">Review, filter statuses, and take action on pending or in-progress issues.</div>
+        </div>
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Issue Type</th>
+                        <th>Description</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Update Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- dynamic complaints from backend -->
+                    <tr th:each="complaint : ${complaints}">
+                        <td th:text="${complaint.id}">101</td>
+                        <td th:text="${complaint.user.fullName}">Thabo Nkosi</td>
+                        <td th:text="${complaint.issueType}">Pothole</td>
+                        <td th:text="${complaint.description}">Deep pothole on main road</td>
+                        <td th:text="${complaint.location}">Witbank Central</td>
+                        <td>
+                            <!-- badge based on status -->
+                            <span th:classappend="'status-badge ' + 
+                                (${complaint.status == 'SUBMITTED'} ? 'status-submitted' : 
+                                 (${complaint.status == 'IN_PROGRESS'} ? 'status-in_progress' : 
+                                 (${complaint.status == 'RESOLVED'} ? 'status-resolved' : 
+                                 (${complaint.status == 'REJECTED'} ? 'status-rejected' : ''))))"
+                                  th:text="${complaint.status}">SUBMITTED</span>
+                        </td>
+                        <td>
+                            <form action="/admin/update-status" method="post" class="inline-status-form" onsubmit="return confirmUpdate(this);">
+                                <input type="hidden" name="complaintId" th:value="${complaint.id}">
+                                <select name="status" class="status-select">
+                                    <option value="SUBMITTED" th:selected="${complaint.status == 'SUBMITTED'}">SUBMITTED</option>
+                                    <option value="IN_PROGRESS" th:selected="${complaint.status == 'IN_PROGRESS'}">IN_PROGRESS</option>
+                                    <option value="RESOLVED" th:selected="${complaint.status == 'RESOLVED'}">RESOLVED</option>
+                                    <option value="REJECTED" th:selected="${complaint.status == 'REJECTED'}">REJECTED</option>
+                                </select>
+                                <button type="submit" class="update-btn">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <!-- empty state fallback if no complaints -->
+                </tbody>
+            </table>
+            <div th:if="${#lists.isEmpty(complaints)}" class="empty-state">
+                No active complaints at the moment. All clear!
+            </div>
+        </div>
+    </div>
+
+    <!-- feedback comments panel -->
+    <div class="panel">
+        <div class="panel-title-row">
+            <div>
+                <h2>Community Feedback Comments</h2>
+                <div class="panel-subtitle">Manage feedback visible on the homepage. Toggle to feature or remove comments.</div>
+            </div>
+            <form th:if="${!#lists.isEmpty(feedbacks)}" action="/admin/delete-all-feedback" method="post" onsubmit="return confirm('Delete all feedback comments? This cannot be undone.');">
+                <button type="submit" class="danger-btn">Delete All Comments</button>
+            </form>
+        </div>
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Comment</th>
+                        <th>Date Submitted</th>
+                        <th>Featured</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="feedback : ${feedbacks}">
+                        <td th:text="${feedback.id}"></td>
+                        <td th:text="${feedback.user.fullName}"></td>
+                        <td th:text="${feedback.comment}"></td>
+                        <td th:text="${#temporals.format(feedback.createdAt, 'dd MMM yyyy HH:mm')}"></td>
+                        <td>
+                            <span th:classappend="'status-badge ' + (${feedback.featured} ? 'status-resolved' : 'status-submitted')"
+                                  th:text="${feedback.featured} ? 'YES' : 'NO'"></span>
+                        </td>
+                        <td>
+                            <div class="inline-status-form">
+                                <form action="/admin/toggle-featured" method="post">
+                                    <input type="hidden" name="feedbackId" th:value="${feedback.id}">
+                                    <button type="submit" class="update-btn" th:text="${feedback.featured} ? 'Remove from Homepage' : 'Add to Homepage'"></button>
+                                </form>
+                                <form action="/admin/delete-feedback" method="post" onsubmit="return confirm('Delete this comment?');">
+                                    <input type="hidden" name="feedbackId" th:value="${feedback.id}">
+                                    <button type="submit" class="danger-btn">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div th:if="${#lists.isEmpty(feedbacks)}" class="empty-state">
+                No feedback comments yet.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript: Auto-hide notification (preserved original 5sec behavior) + improve confirm dialog -->
+<script>
+    // auto-hide notification after 5 seconds (exactly as original requirement)
+    (function() {
+        let notification = document.getElementById("notification");
+        if (notification) {
+            setTimeout(function () {
+                if (notification) {
+                    notification.style.display = "none";
+                }
+            }, 5000);
+        }
+
+        // Attach confirm dialog for status updates (improved UX but not intrusive)
+        window.confirmUpdate = function(formElement) {
+            const selectEl = formElement.querySelector('select[name="status"]');
+            if (selectEl) {
+                const newStatus = selectEl.options[selectEl.selectedIndex]?.text || selectEl.value;
+                return confirm(`Are you sure you want to change this complaint's status to ${newStatus}?`);
+            }
+            return confirm("Update complaint status?");
+        };
+
+        // Optional: Add submit listener to all status update forms to prevent double submission
+        const forms = document.querySelectorAll('.inline-status-form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const btn = form.querySelector('button[type="submit"]');
+                if (btn && !btn.disabled) {
+                    btn.disabled = true;
+                    btn.textContent = 'Updating...';
+                    // re-enable after timeout as safety
+                    setTimeout(() => {
+                        if (btn.disabled) {
+                            btn.disabled = false;
+                            btn.textContent = 'Update';
+                        }
+                    }, 8000);
+                }
+            });
+        });
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Analytics Dashboard - Witbank Community Service</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, 'Segoe UI', 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f0f4f8;
+            color: #1e2a3e;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+        }
+
+        .admin-shell {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .admin-header {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.75rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9edf2;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-header-copy {
+            flex: 2;
+        }
+
+        .eyebrow {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: #2c6e9e;
+            background: #eef4fc;
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            margin-bottom: 0.75rem;
+        }
+
+        .admin-header-copy h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #0f2b3d;
+            margin-bottom: 0.35rem;
+        }
+
+        .admin-header-copy p {
+            color: #4a5b6e;
+            font-size: 1rem;
+        }
+
+        .admin-header-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .login-btn {
+            background: #1f6392;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.6rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.2s ease;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+            font-family: inherit;
+        }
+
+        .login-btn:hover {
+            background: #0e4a70;
+            text-decoration: none;
+        }
+
+        .button-secondary {
+            background: #eef2f7;
+            color: #2c3e4e;
+            border: 1px solid #cdd9e9;
+            padding: 0.7rem 1.6rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+
+        .button-secondary:hover {
+            background: #e2e8f0;
+            border-color: #b9cadb;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eef2f8;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1f6392;
+            margin: 0.5rem 0;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #5e7a93;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-panel {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eef2f8;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e2f3f;
+            margin-bottom: 1rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .location-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .location-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #eef2f8;
+        }
+
+        .location-item:last-child {
+            border-bottom: none;
+        }
+
+        .location-name {
+            font-weight: 500;
+            color: #1e2a3e;
+        }
+
+        .location-count {
+            background: #eef4fc;
+            color: #2c6e9e;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 900px) {
+            body {
+                padding: 1rem;
+            }
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .stat-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="admin-shell">
+    <header class="admin-header">
+        <div class="admin-header-copy">
+            <div class="eyebrow">Analytics & Insights</div>
+            <h1>Complaints Analytics Dashboard</h1>
+            <p>Real-time insights into community complaint trends and resolution metrics.</p>
+        </div>
+        <div class="admin-header-actions">
+            <a href="/admin" class="button-secondary">Back to Dashboard</a>
+            <a href="/logout" class="login-btn">Logout</a>
+        </div>
+    </header>
+
+    <!-- Data attributes for JavaScript -->
+    <div style="display: none;"
+         data-submitted="[[${statusCounts.getOrDefault('SUBMITTED', 0L)}]]"
+         data-in-progress="[[${statusCounts.getOrDefault('IN_PROGRESS', 0L)}]]"
+         data-resolved="[[${statusCounts.getOrDefault('RESOLVED', 0L)}]]"
+         data-rejected="[[${statusCounts.getOrDefault('REJECTED', 0L)}]]"
+         data-issue-labels='[[${#maps.listKeys(issueCounts)}]]'
+         data-issue-values='[[${#maps.listValues(issueCounts)}]]'>
+    </div>
+
+    <!-- Key Metrics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total Complaints</div>
+            <div class="stat-value" th:text="${totalComplaints}">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Resolution Rate</div>
+            <div class="stat-value" th:text="${resolutionRate} + '%'">0%</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Active Issues</div>
+            <div class="stat-value" th:text="${statusCounts.getOrDefault('SUBMITTED', 0L) + statusCounts.getOrDefault('IN_PROGRESS', 0L)}">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Resolved</div>
+            <div class="stat-value" th:text="${statusCounts.getOrDefault('RESOLVED', 0L)}">0</div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-grid">
+        <!-- Status Distribution Chart -->
+        <div class="chart-panel">
+            <div class="chart-title">Complaint Status Distribution</div>
+            <div class="chart-container">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Issue Type Chart -->
+        <div class="chart-panel">
+            <div class="chart-title">Complaints by Issue Type</div>
+            <div class="chart-container">
+                <canvas id="issueChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Locations -->
+    <div class="chart-panel">
+        <div class="chart-title">Top 5 Most Reported Locations</div>
+        <ul class="location-list">
+            <li class="location-item" th:each="location : ${topLocations}">
+                <span class="location-name" th:text="${location.key}"></span>
+                <span class="location-count" th:text="${location.value}"></span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    // Chart.js Configuration
+    Chart.defaults.font.family = "system-ui, 'Segoe UI', 'Inter', 'Roboto'";
+    Chart.defaults.color = '#5e7a93';
+
+    // Get data from attributes
+    const dataElement = document.querySelector('[data-submitted]');
+    const submitted = parseInt(dataElement.getAttribute('data-submitted')) || 0;
+    const inProgress = parseInt(dataElement.getAttribute('data-in-progress')) || 0;
+    const resolved = parseInt(dataElement.getAttribute('data-resolved')) || 0;
+    const rejected = parseInt(dataElement.getAttribute('data-rejected')) || 0;
+    
+    const issueLabelsStr = dataElement.getAttribute('data-issue-labels') || '[]';
+    const issueValuesStr = dataElement.getAttribute('data-issue-values') || '[]';
+    
+    let issueLabels = [];
+    let issueValues = [];
+    
+    try {
+        issueLabels = JSON.parse(issueLabelsStr);
+        issueValues = JSON.parse(issueValuesStr);
+    } catch (e) {
+        console.log('Using empty issue data');
+    }
+
+    // Status Distribution Chart
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Submitted', 'In Progress', 'Resolved', 'Rejected'],
+            datasets: [{
+                data: [submitted, inProgress, resolved, rejected],
+                backgroundColor: [
+                    '#eef2fa',
+                    '#fff0db',
+                    '#e0f2e9',
+                    '#fee9e7'
+                ],
+                borderColor: [
+                    '#2c6280',
+                    '#b8681a',
+                    '#1f7840',
+                    '#b13e3a'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: { size: 13, weight: '600' }
+                    }
+                }
+            }
+        }
+    });
+
+    // Issue Type Chart
+    const issueCtx = document.getElementById('issueChart').getContext('2d');
+    new Chart(issueCtx, {
+        type: 'bar',
+        data: {
+            labels: issueLabels,
+            datasets: [{
+                label: 'Count',
+                data: issueValues,
+                backgroundColor: '#1f6392',
+                borderColor: '#0e4a70',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>
