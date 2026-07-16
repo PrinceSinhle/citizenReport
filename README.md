@@ -1,31 +1,46 @@
 # Witbank Community Service System
 
-A Spring Boot web application designed to improve communication between citizens and local authorities by allowing residents to report community service issues, track complaint progress, and provide community feedback.
+A Spring Boot web application developed to improve communication between citizens and local authorities by providing a platform where residents can report community service issues, track complaint progress, and submit community feedback.
+
+---
+
+## Project Overview
+
+The Witbank Community Service System enables residents to report municipal service issues such as water outages, electricity failures, road damage, waste collection problems, and other community concerns.
+
+The system provides administrators with tools to manage complaints, monitor community issues, publish approved feedback, and generate reports for decision-making.
 
 ---
 
 ## Features
 
 ### User Features
-- User Registration and Login
-- Secure Authentication with Spring Security
+
+- User Registration
+- User Login
+- Secure Authentication
 - Submit Community Complaints
 - Track Complaint Status
-- Submit Feedback
+- View Complaint History
+- Submit Community Feedback
 - Delete Personal Account
 
-### Admin Features
+### Administrator Features
+
 - Admin Dashboard
 - Manage Complaints
 - Update Complaint Status
 - Delete and Restore Complaints
-- Push Selected Community Feedback to Homepage
+- Publish Community Feedback
 - Analytics Dashboard
-- Report Generation Feature
+- Generate Reports
 
-### Security Features
+---
+
+## Security
+
 - Spring Security Authentication
-- Role-Based Authorization (ADMIN / USER)
+- Role-Based Authorization (Admin and User)
 - BCrypt Password Encryption
 - Protected Routes and Sessions
 
@@ -34,6 +49,7 @@ A Spring Boot web application designed to improve communication between citizens
 ## Technologies Used
 
 ### Backend
+
 - Java
 - Spring Boot
 - Spring MVC
@@ -41,66 +57,181 @@ A Spring Boot web application designed to improve communication between citizens
 - Spring Data JPA
 
 ### Frontend
+
 - HTML5
 - CSS3
 - Thymeleaf
 
 ### Database
+
 - MySQL
 
-### Tools
+### Development Tools
+
 - Maven
 - Git
 - GitHub
-- VS Code
+- Visual Studio Code
 
 ---
 
-## System Modules
+## Application Screenshots
 
-### Authentication Module
-Handles:
-- Registration
-- Login
-- Logout
-- Password Encryption
-- User Roles
+### Home Page
 
-### Complaint Management Module
-Allows users to:
-- Submit complaints
-- View complaint history
-- Track status updates
+![Home Page](screenshots/homepage.png)
 
-Allows admins to:
-- Manage complaints
-- Update statuses
-- Restore deleted complaints
+### Login Page
 
-### Feedback Module
-Users can:
-- Submit feedback
+![Login Page](screenshots/loginPage.png)
 
-Admins can:
-- Approve selected feedback
-- Publish feedback to homepage
+### Registration Page
 
-### Analytics & Reports Module
-Provides:
-- Complaint statistics
-- Community issue analysis
-- Report generation for administrators
+![Registration Page](screenshots/registrationForm.png)
+
+### User Dashboard
+
+![User Dashboard](screenshots/Userdashboard.png)
+
+### Submit Complaint
+
+![Submit Complaint](screenshots/SubmitComplaint.png)
+
+### Admin Dashboard
+
+![Admin Dashboard](screenshots/adminDashboard.png)
+
+### Analytics Dashboard
+
+![Analytics Dashboard](screenshots/AnalyticsDashboard.png)
+
+### Reports
+
+![Reports](screenshots/report.png)
+
+### Settled Complaints
+
+![Settled Complaints](screenshots/settledComplaintsDashboard.png)
 
 ---
 
 ## Project Structure
 
 ```text
-src/
- ├── controller/
- ├── model/
- ├── repository/
- ├── security/
- ├── service/
- ├── templates/
- └── static/
+src
+│
+├── controller
+├── model
+├── repository
+├── security
+├── service
+├── templates
+└── static
+```
+
+---
+
+## Installation
+
+### Clone the repository
+
+```bash
+git clone https://github.com/PrinceSinhle/Witbank-Community-Service-System.git
+```
+
+### Navigate to the project directory
+
+```bash
+cd Witbank-Community-Service-System
+```
+
+### Configure the database
+
+Update the `application.properties` file with your MySQL credentials.
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/community_db
+spring.datasource.username=root
+spring.datasource.password=your_password
+```
+
+### Run the application
+
+```bash
+mvn spring-boot:run
+```
+
+Open your browser and visit:
+
+```
+http://localhost:8080
+```
+
+---
+
+## System Modules
+
+### Authentication
+
+- User Registration
+- User Login
+- Logout
+- Password Encryption
+- Role Management
+
+### Complaint Management
+
+Users can:
+
+- Submit complaints
+- View complaint history
+- Track complaint status
+
+Administrators can:
+
+- Manage complaints
+- Update complaint status
+- Restore deleted complaints
+
+### Feedback Management
+
+Users can:
+
+- Submit feedback
+
+Administrators can:
+
+- Review and publish approved feedback
+
+### Analytics and Reporting
+
+- Complaint statistics
+- Community issue analysis
+- Administrative reports
+
+---
+
+## Future Enhancements
+
+- Email Notifications
+- SMS Notifications
+- File Attachments
+- Interactive Maps
+- Mobile Responsive Design
+- REST API Integration
+- Docker Deployment
+- Cloud Deployment
+
+---
+
+## Author
+
+**Prince Sinhle**
+
+GitHub: https://github.com/PrinceSinhle
+
+---
+
+## License
+
+This project is intended for educational and portfolio purposes.
