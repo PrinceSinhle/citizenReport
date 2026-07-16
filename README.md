@@ -95,7 +95,7 @@ The system provides administrators with tools to manage complaints, monitor comm
 
 ### Submit Complaint
 
-![Submit Complaint](screenshots/SubmitComplaint.png)
+![Submit Complaint](screenshots/SubmintComplaint.png)
 
 ### Admin Dashboard
 
