@@ -136,15 +136,7 @@ src
 ### Clone the repository
 
 ```bash
-git clone https://github.com/PrinceSinhle/Witbank-Community-Service-System.git
-```
-
-### Navigate to the project directory
-
-```bash
-cd Witbank-Community-Service-System
-```
-
+git clone https://github.com/PrinceSinhle/citizenReport.git
 ### Configure the database
 
 Update the `application.properties` file with your MySQL credentials.
