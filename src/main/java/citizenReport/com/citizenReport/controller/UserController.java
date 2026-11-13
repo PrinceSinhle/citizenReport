@@ -1,77 +1,57 @@
 package citizenReport.com.citizenReport.controller;
 
-import citizenReport.com.citizenReport.model.User;
-import citizenReport.com.citizenReport.repository.UserRepository;
-
+import citizenReport.com.citizenReport.dto.RegisterRequest;
+import citizenReport.com.citizenReport.dto.UpdateUserRequest;
+import citizenReport.com.citizenReport.dto.UserResponse;
+import citizenReport.com.citizenReport.exception.CannotDeleteCurrentUserException;
+import citizenReport.com.citizenReport.service.UserService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
-@Controller
+@RestController
+@RequestMapping("/api/users")
 public class UserController {
+    private final UserService users;
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    public UserController(
-            UserRepository userRepository,
-            PasswordEncoder passwordEncoder) {
-
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+    public UserController(UserService users) {
+        this.users = users;
     }
 
-    @GetMapping("/register")
-    public String registerPage() {
-        return "register";
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserResponse create(@Valid @RequestBody RegisterRequest request) {
+        return UserResponse.from(users.create(request));
     }
 
-    @PostMapping("/register")
-    public String registerUser(
-            @RequestParam String fullName,
-            @RequestParam String email,
-            @RequestParam String password,
-            @RequestParam String phoneNumber) {
-
-        User user = new User();
-
-        user.setFullName(fullName);
-        user.setEmail(email);
-
-        /* ENCRYPT PASSWORD */
-        user.setPassword(
-                passwordEncoder.encode(password)
-        );
-
-        user.setPhoneNumber(phoneNumber);
-
-        /* DEFAULT ROLE */
-        user.setRole("USER");
-
-        userRepository.save(user);
-
-        return "redirect:/login";
+    @GetMapping
+    public List<UserResponse> list() {
+        return users.findAll().stream().map(UserResponse::from).toList();
     }
 
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login";
+    @GetMapping("/by-email")
+    public UserResponse findByEmail(@RequestParam String email) {
+        return UserResponse.from(users.findByEmail(email));
     }
 
-    @PostMapping("/delete-account")
-    public String deleteAccount(
-            Authentication authentication) {
+    @GetMapping("/{id}")
+    public UserResponse findById(@PathVariable Long id) {
+        return UserResponse.from(users.findById(id));
+    }
 
-        String email = authentication.getName();
+    @PutMapping("/{id}")
+    public UserResponse update(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest request) {
+        return UserResponse.from(users.update(id, request));
+    }
 
-        User user = userRepository.findByEmail(email);
-
-        if (user != null) {
-            userRepository.delete(user);
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id, Authentication authentication) {
+        if (id.toString().equals(authentication.getName())) {
+            throw new CannotDeleteCurrentUserException();
         }
-
-        return "redirect:/login";
+        users.delete(id);
     }
 }

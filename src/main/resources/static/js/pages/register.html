@@ -1,0 +1,104 @@
+<!-- REGISTRATION PAGE -->
+      <section class="view auth-view" data-view="register" hidden>
+
+        <div class="auth-aside register-aside">
+
+          <div class="eyebrow light-eyebrow">
+            A BETTER WAY TO SPEAK UP
+          </div>
+
+          <h1>Be part of<br>what gets <em>better.</em></h1>
+
+          <p>
+            Create an account to report local issues and keep track of every update in one place.
+          </p>
+
+          <div class="aside-note">
+            <span>Made for residents.<br>Focused on local progress.</span>
+          </div>
+
+        </div>
+
+        <div class="auth-panel">
+
+          <div class="auth-form-wrap register-form-wrap">
+
+            <div class="eyebrow">
+              GET STARTED
+            </div>
+
+            <h2>Your voice<br><em>belongs here.</em></h2>
+
+            <p class="form-intro">Set up your account in a couple of minutes.</p>
+
+            <form id="register-form" class="form-stack" novalidate>
+
+              <label for="register-name">Full name</label>
+
+              <input
+                id="register-name"
+                name="fullName"
+                type="text"
+                autocomplete="name"
+                maxlength="120"
+                placeholder="Your full name"
+                required
+              >
+
+              <label for="register-email">Email address</label>
+
+              <input
+                id="register-email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                maxlength="254"
+                placeholder="you@example.com"
+                required
+              >
+
+              <label for="register-phone">
+                Phone number
+                <span class="optional">OPTIONAL</span>
+              </label>
+
+              <input
+                id="register-phone"
+                name="phoneNumber"
+                type="tel"
+                autocomplete="tel"
+                maxlength="30"
+                placeholder="e.g. 071 234 5678"
+              >
+
+              <label for="register-password">Create a password</label>
+
+              <input
+                id="register-password"
+                name="password"
+                type="password"
+                autocomplete="new-password"
+                minlength="10"
+                maxlength="72"
+                placeholder="At least 10 characters"
+                required
+              >
+
+              <div class="form-message" id="register-message" role="status" aria-live="polite"></div>
+
+              <button class="button button-dark button-full" type="submit">
+                Create account
+              </button>
+
+            </form>
+
+            <p class="auth-switch">
+              Already have an account?
+              <a href="#login">Sign in</a>
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>

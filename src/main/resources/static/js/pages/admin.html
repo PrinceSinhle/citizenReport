@@ -1,0 +1,162 @@
+<!-- ADMIN DASHBOARD -->
+      <section class="view admin-view" data-view="admin" hidden>
+
+        <div class="dashboard-head admin-dashboard-head">
+
+          <div>
+
+            <div class="eyebrow">
+              SERVICE MANAGEMENT · ADMIN
+            </div>
+
+            <h1>Community <em>overview.</em></h1>
+
+            <p>Review new reports, update progress, and manage resident accounts.</p>
+
+          </div>
+
+          <div class="admin-head-actions">
+
+            <a class="button button-outline" href="#settled">
+              Settled complaints
+            </a>
+
+            <button class="button button-dark" id="admin-logout" type="button">
+              Sign out
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="admin-summary-grid">
+
+          <article class="admin-stat admin-stat-featured">
+            <span class="summary-label">ALL REPORTS</span>
+            <strong id="admin-total">0</strong>
+            <span class="summary-foot">Across the community</span>
+            <span class="summary-watermark">01</span>
+          </article>
+
+          <article class="admin-stat">
+            <span class="summary-label">NEEDS ATTENTION</span>
+            <strong id="admin-open">0</strong>
+            <span class="summary-foot">Submitted or in progress</span>
+            <span class="summary-watermark">02</span>
+          </article>
+
+          <article class="admin-stat">
+            <span class="summary-label">SETTLED</span>
+            <strong id="admin-settled">0</strong>
+            <span class="summary-foot">Resolved or rejected</span>
+            <span class="summary-watermark">03</span>
+          </article>
+
+          <article class="admin-stat">
+            <span class="summary-label">RESIDENT ACCOUNTS</span>
+            <strong id="admin-users-count">0</strong>
+            <span class="summary-foot">Registered users</span>
+            <span class="summary-watermark">04</span>
+          </article>
+
+        </div>
+
+        <section class="admin-panel">
+
+          <div class="admin-panel-heading">
+
+            <div>
+              <div class="eyebrow">
+                CASE MANAGEMENT
+              </div>
+
+              <h2>Complaint register</h2>
+            </div>
+
+            <span class="report-count" id="admin-case-count">All reports</span>
+
+          </div>
+
+          <form id="admin-filter-form" class="admin-filters">
+
+            <label>
+              Status
+              <select name="status">
+                <option value="">All active complaints</option>
+                <option value="SUBMITTED">Submitted</option>
+                <option value="IN_PROGRESS">In progress</option>
+              </select>
+            </label>
+
+            <label>
+              Issue type
+              <input name="issueType" type="search" placeholder="e.g. streetlight">
+            </label>
+
+            <label>
+              Location
+              <input name="location" type="search" placeholder="e.g. Witbank Central">
+            </label>
+
+            <div class="filter-actions">
+
+              <button class="button button-dark button-small" type="submit">
+                Apply filters
+              </button>
+
+              <button class="filter-reset" id="admin-filter-reset" type="button">
+                Reset
+              </button>
+
+            </div>
+
+          </form>
+
+          <div class="admin-feedback" id="admin-message" role="status" aria-live="polite"></div>
+
+          <div id="admin-complaints" class="admin-record-list"></div>
+
+        </section>
+
+        <!-- RESIDENT ACCOUNT MANAGEMENT -->
+        <section class="admin-panel user-management-panel">
+
+          <button
+            class="admin-users-toggle"
+            id="admin-users-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="admin-users-panel"
+          >
+
+            <span class="admin-users-title">
+
+              <span class="eyebrow">
+                ACCOUNT MANAGEMENT
+              </span>
+
+              <strong>Resident accounts</strong>
+
+            </span>
+
+            <span class="admin-users-count">
+              <span id="admin-users-toggle-count">0</span> accounts
+            </span>
+
+            <span class="admin-users-chevron" aria-hidden="true">⌄</span>
+
+          </button>
+
+          <div id="admin-users-panel" hidden>
+
+            <p class="admin-users-note">
+              Deleting an account also permanently removes its complaints.
+            </p>
+
+            <div id="admin-users" class="admin-user-list"></div>
+
+          </div>
+
+        </section>
+
+      </section>

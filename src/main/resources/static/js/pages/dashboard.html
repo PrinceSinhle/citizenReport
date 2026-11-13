@@ -1,0 +1,156 @@
+<!-- RESIDENT DASHBOARD -->
+      <section class="view dashboard-view" data-view="dashboard" hidden>
+
+        <div class="dashboard-head">
+
+          <div>
+
+            <div class="eyebrow">
+              YOUR COMMUNITY DASHBOARD
+            </div>
+
+            <h1>Good day, <em id="welcome-name">neighbour.</em></h1>
+
+            <p>Here’s the latest on the issues you’ve raised.</p>
+
+          </div>
+
+          <button class="button button-outline" id="logout-button" type="button">
+          Sign out
+          </button>
+
+        </div>
+
+        <div class="dashboard-grid">
+
+          <section class="dashboard-main">
+
+            <div class="summary-grid">
+
+              <article class="summary-card summary-total">
+                <span class="summary-label">YOUR REPORTS</span>
+                <strong id="count-total">0</strong>
+                <span class="summary-foot">All submitted reports</span>
+                <span class="summary-watermark">01</span>
+              </article>
+
+              <article class="summary-card">
+                <span class="summary-label">IN PROGRESS</span>
+                <strong id="count-progress">0</strong>
+                <span class="summary-foot">Being looked into</span>
+                <span class="summary-watermark">02</span>
+              </article>
+
+              <article class="summary-card">
+                <span class="summary-label">RESOLVED</span>
+                <strong id="count-resolved">0</strong>
+                <span class="summary-foot">Marked as complete</span>
+                <span class="summary-watermark">03</span>
+              </article>
+
+            </div>
+
+            <section class="reports-panel">
+
+              <div class="panel-heading">
+
+                <div>
+                  <div class="eyebrow">
+                    YOUR ACTIVITY
+                  </div>
+
+                  <h2>Recent reports</h2>
+                </div>
+
+                <span class="report-count" id="report-count"></span>
+
+              </div>
+
+              <div id="reports-list" class="reports-list">
+
+                <div class="empty-state">
+                  <h3>Your reports will show up here.</h3>
+                  <p>
+                    When you submit a local issue, you can follow its status from this dashboard.
+                  </p>
+                </div>
+
+              </div>
+
+            </section>
+
+          </section>
+
+          <aside class="dashboard-side">
+
+            <section class="new-report-panel">
+
+              <div class="eyebrow light-eyebrow">
+                SPEAK UP
+              </div>
+
+              <h2>Notice<br>something?</h2>
+
+              <p>
+                Share the details and help bring attention to what needs fixing.
+              </p>
+
+              <form id="complaint-form" class="form-stack report-form" novalidate>
+
+                <label for="issue-type">Type of issue</label>
+
+                <input
+                  id="issue-type"
+                  name="issueType"
+                  type="text"
+                  maxlength="80"
+                  placeholder="e.g. Streetlight outage"
+                  required
+                >
+
+                <label for="issue-location">Area or location</label>
+
+                <input
+                  id="issue-location"
+                  name="location"
+                  type="text"
+                  maxlength="160"
+                  placeholder="e.g. Witbank Central"
+                  required
+                >
+
+                <label for="issue-description">What’s happening?</label>
+
+                <textarea
+                  id="issue-description"
+                  name="description"
+                  rows="4"
+                  maxlength="4000"
+                  placeholder="Add a few details to help us understand the issue..."
+                  required
+                ></textarea>
+
+                <div class="form-message" id="complaint-message" role="status" aria-live="polite"></div>
+
+                <button class="button button-lime button-full" type="submit">
+                  Submit report
+                </button>
+
+              </form>
+
+            </section>
+
+            <div class="dashboard-tip">
+
+              <div>
+                <strong>A little detail goes a long way.</strong>
+                <p>Include a nearby landmark or when the issue started.</p>
+              </div>
+
+            </div>
+
+          </aside>
+
+        </div>
+
+      </section>

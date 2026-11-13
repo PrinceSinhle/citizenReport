@@ -1,0 +1,132 @@
+<!-- SETTLED COMPLAINTS -->
+      <section class="view settled-view" data-view="settled" hidden>
+
+        <div class="dashboard-head settled-head">
+
+          <div>
+
+            <div class="eyebrow">
+              COMPLETED CASES · ADMIN
+            </div>
+
+            <h1>Settled <em>complaints.</em></h1>
+
+            <p>
+              Review reports marked resolved or rejected, and narrow the list with filters.
+            </p>
+
+          </div>
+
+          <div class="admin-head-actions">
+
+            <a class="button button-outline" href="#admin">
+              Back to admin dashboard
+            </a>
+
+            <button class="button button-dark" id="settled-logout" type="button">
+              Sign out
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="settled-summary">
+
+          <div>
+            <span class="summary-label">RESOLVED</span>
+            <strong id="settled-resolved-count">0</strong>
+          </div>
+
+          <div>
+            <span class="summary-label">REJECTED</span>
+            <strong id="settled-rejected-count">0</strong>
+          </div>
+
+          <div>
+            <span class="summary-label">SHOWING</span>
+            <strong id="settled-total-count">0</strong>
+          </div>
+
+        </div>
+
+        <section class="admin-panel settled-panel">
+
+          <div class="admin-panel-heading">
+
+            <div>
+              <div class="eyebrow">
+                ARCHIVE
+              </div>
+
+              <h2>Settled case register</h2>
+            </div>
+
+            <span class="report-count">Most recent first</span>
+
+          </div>
+
+          <form id="settled-filter-form" class="admin-filters">
+
+            <label>
+              Status
+              <select name="status">
+                <option value="">All settled</option>
+                <option value="RESOLVED">Resolved</option>
+                <option value="REJECTED">Rejected</option>
+              </select>
+            </label>
+
+            <label>
+              Issue type
+              <input name="issueType" type="search" placeholder="e.g. road">
+            </label>
+
+            <label>
+              Location
+              <input name="location" type="search" placeholder="e.g. Witbank Central">
+            </label>
+
+            <div class="filter-actions">
+
+              <button class="button button-dark button-small" type="submit">
+                Apply filters
+              </button>
+
+              <button class="filter-reset" id="settled-filter-reset" type="button">
+                Reset
+              </button>
+
+            </div>
+
+          </form>
+
+          <div class="admin-feedback" id="settled-message" role="status" aria-live="polite"></div>
+
+          <div class="settled-bulk-actions">
+
+            <label class="select-all-label">
+              <input type="checkbox" id="settled-select-all">
+              Select all shown
+            </label>
+
+            <span id="settled-selected-count" class="report-count">
+              0 selected
+            </span>
+
+            <button
+              class="button button-danger button-small"
+              id="delete-settled-selected"
+              type="button"
+              disabled
+            >
+              Delete selected
+            </button>
+
+          </div>
+
+          <div id="settled-complaints" class="admin-record-list settled-record-list"></div>
+
+        </section>
+
+      </section>
